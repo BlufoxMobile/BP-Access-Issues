@@ -311,10 +311,14 @@
     btn.disabled = true;
     btn.textContent = "Submitting…";
     try {
-      // Zapier catch-hooks accept JSON or form-encoded; JSON keeps arrays intact.
+      // IMPORTANT: We send with Content-Type "text/plain" instead of
+      // "application/json" so the browser treats this as a "simple" CORS
+      // request and skips the preflight OPTIONS check that Zapier's catch
+      // hooks don't always answer. Zapier's webhook parser still reads the
+      // JSON body correctly.
       const res = await fetch(WEBHOOK_URL, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "text/plain;charset=UTF-8" },
         body: JSON.stringify(payload)
       });
       if (!res.ok) throw new Error("Webhook responded " + res.status);
