@@ -171,6 +171,12 @@
         </div>
 
         <div class="field">
+          <label for="repEmail">What is your Blufox email?<span class="req">*</span></label>
+          <input type="email" id="repEmail" name="repEmail" required placeholder="example@blufoxmobile.com" autocomplete="email" />
+          <span class="hint">We'll CC you on the notification email.</span>
+        </div>
+
+        <div class="field">
           <label for="store">What is your store?<span class="req">*</span></label>
           <select id="store" name="store" required>
             <option value="">Please Select</option>
@@ -276,11 +282,12 @@
     // Gather data
     const fullName = document.getElementById("fullName").value.trim();
     const bpLogin  = document.getElementById("bpLogin").value.trim();
+    const repEmail = document.getElementById("repEmail").value.trim();
     const store    = document.getElementById("store").value;
     const issues   = Array.from(document.querySelectorAll('input[name="issues"]:checked')).map(i => i.value);
 
     // Basic validation
-    if (!fullName || !bpLogin || !store) {
+    if (!fullName || !bpLogin || !repEmail || !store) {
       statusEl.className = "status show error";
       statusEl.textContent = "Please fill out every required field.";
       return;
@@ -297,6 +304,7 @@
     const payload = {
       fullName,
       bpLogin,
+      repEmail,
       store,
       storeManagerName:     info.managerName,
       storeManagerEmail:    info.managerEmail,
