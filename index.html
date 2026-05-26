@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+<title>Report BP Access Issues</title>
+<style>
+  :root {
+    --brand: #0a3d62;
+    --brand-dark: #062a45;
+    --accent: #1e88e5;
+    --bg: #f4f6f9;
+    --card: #ffffff;
+    --text: #1f2933;
+    --muted: #5b6b7d;
+    --border: #d9e0e8;
+    --error: #c0392b;
+    --success: #1e8e3e;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.5;
+  }
+  .wrap {
+    max-width: 720px;
+    margin: 32px auto;
+    padding: 0 16px;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(10, 61, 98, 0.06);
+  }
+  .header {
+    background: linear-gradient(135deg, var(--brand) 0%, var(--brand-dark) 100%);
+    color: #fff;
+    padding: 28px 32px;
+  }
+  .header h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+  }
+  .header p {
+    margin: 6px 0 0;
+    color: rgba(255,255,255,0.85);
+    font-size: 14px;
+  }
+  form { padding: 24px 32px 32px; }
+  .field { margin-bottom: 20px; }
+  .field label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 6px;
+    font-size: 14px;
+    color: var(--text);
+  }
+  .field .hint {
+    display: block;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+  .field input[type="text"],
+  .field input[type="email"],
+  .field select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 15px;
+    background: #fff;
+    color: var(--text);
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .field input:focus,
+  .field select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.18);
+  }
+  .field input[readonly] {
+    background: #f1f4f7;
+    color: var(--muted);
+  }
+  .req { color: var(--error); margin-left: 2px; }
+  .checks {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 8px 16px;
+    margin-top: 6px;
+  }
+  .checks label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 400;
+    font-size: 14px;
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    background: #fff;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .checks label:hover { border-color: var(--accent); background: #f7fbff; }
+  .checks input[type="checkbox"] { accent-color: var(--accent); width: 16px; height: 16px; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 560px) { .row { grid-template-columns: 1fr; } }
+  .submit {
+    margin-top: 8px;
+    background: var(--brand);
+    color: #fff;
+    border: 0;
+    border-radius: 8px;
+    padding: 12px 22px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.05s;
+  }
+  .submit:hover { background: var(--brand-dark); }
+  .submit:active { transform: translateY(1px); }
+  .submit:disabled { background: #93a3b3; cursor: not-allowed; }
+  .status {
+    margin-top: 16px;
+    padding: 12px 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    display: none;
+  }
+  .status.show { display: block; }
+  .status.success { background: #e6f5ea; color: var(--success); border: 1px solid #b6e0c1; }
+  .status.error { background: #fbeae8; color: var(--error); border: 1px solid #f0c2bd; }
+  .meta-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 14px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .loading-stores { font-size: 13px; color: var(--muted); margin-top: 4px; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="header">
+        <h1>Report BP Access Issues</h1>
+        <p>Let us know what you can't access. Your manager and district manager will be notified.</p>
+      </div>
+
+      <form id="accessForm" novalidate>
+        <div class="field">
+          <label for="fullName">What is your full name?<span class="req">*</span></label>
+          <input type="text" id="fullName" name="fullName" required autocomplete="name" />
+        </div>
+
+        <div class="field">
+          <label for="bpLogin">What is your BP Login?<span class="req">*</span></label>
+          <input type="text" id="bpLogin" name="bpLogin" required autocomplete="username" />
+        </div>
+
+        <div class="field">
+          <label for="store">What is your store?<span class="req">*</span></label>
+          <select id="store" name="store" required>
+            <option value="">Please Select</option>
+          </select>
+          <span class="loading-stores" id="storeStatus">Loading stores…</span>
+        </div>
+
+        <div class="field">
+          <label>What are you having trouble accessing?<span class="req">*</span></label>
+          <div class="checks" id="issues">
+            <label><input type="checkbox" name="issues" value="CSG" /> CSG</label>
+            <label><input type="checkbox" name="issues" value="XOE" /> XOE</label>
+            <label><input type="checkbox" name="issues" value="Einstein" /> Einstein</label>
+            <label><input type="checkbox" name="issues" value="IE Portal" /> IE Portal</label>
+            <label><input type="checkbox" name="issues" value="Medallia" /> Medallia</label>
+            <label><input type="checkbox" name="issues" value="Retail 360" /> Retail 360</label>
+            <label><input type="checkbox" name="issues" value="Celestial" /> Celestial</label>
+            <label><input type="checkbox" name="issues" value="Hub2U" /> Hub2U</label>
+            <label><input type="checkbox" name="issues" value="Blufox Email" /> Blufox Email</label>
+            <label><input type="checkbox" name="issues" value="Microsoft Teams" /> Microsoft Teams</label>
+          </div>
+        </div>
+
+        <button class="submit" type="submit" id="submitBtn">Submit</button>
+
+        <div class="status" id="status"></div>
+
+        <div class="meta-line">
+          <span>Blufox Mobile — Internal Use</span>
+          <span id="dirUpdated"></span>
+        </div>
+      </form>
+    </div>
+  </div>
+
+<script>
+  // ============================================================
+  // CONFIG
+  // ============================================================
+  const DIRECTORY_URL = "https://raw.githubusercontent.com/blufoxmobile/Daily-Sales-Report/main/data/store-directory.json";
+  const WEBHOOK_URL   = "https://hooks.zapier.com/hooks/catch/20441079/u5s2w06/";
+
+  // ============================================================
+  // State
+  // ============================================================
+  let directory = null;
+
+  // ============================================================
+  // Load directory
+  // ============================================================
+  async function loadDirectory() {
+    const statusEl  = document.getElementById("storeStatus");
+    const storeSel  = document.getElementById("store");
+    const updatedEl = document.getElementById("dirUpdated");
+
+    try {
+      // Bust GitHub's CDN cache so updates show up quickly
+      const res = await fetch(DIRECTORY_URL + "?t=" + Date.now(), { cache: "no-store" });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      directory = await res.json();
+
+      // Populate dropdown — sorted alphabetically
+      const stores = (directory.stores || []).slice().sort((a, b) => a.localeCompare(b));
+      for (const s of stores) {
+        const opt = document.createElement("option");
+        opt.value = s;
+        opt.textContent = s;
+        storeSel.appendChild(opt);
+      }
+      statusEl.textContent = stores.length + " stores loaded.";
+      if (directory.updatedAt) {
+        const d = new Date(directory.updatedAt);
+        updatedEl.textContent = "Directory updated " + d.toLocaleDateString();
+      }
+    } catch (err) {
+      statusEl.textContent = "Could not load store directory: " + err.message;
+      statusEl.style.color = "var(--error)";
+    }
+  }
+
+  // ============================================================
+  // Helpers — look up the manager/DM info from the directory
+  // ============================================================
+  function lookup(store) {
+    if (!store || !directory) return { managerEmail: "", managerName: "", dmEmail: "" };
+    return {
+      managerEmail: (directory.storeManagers     || {})[store] || "",
+      managerName:  (directory.storeManagerNames || {})[store] || "",
+      dmEmail:      (directory.storeDMs          || {})[store] || ""
+    };
+  }
+
+  // ============================================================
+  // Submit
+  // ============================================================
+  document.getElementById("accessForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const btn      = document.getElementById("submitBtn");
+    const statusEl = document.getElementById("status");
+    statusEl.className = "status";
+    statusEl.textContent = "";
+
+    // Gather data
+    const fullName = document.getElementById("fullName").value.trim();
+    const bpLogin  = document.getElementById("bpLogin").value.trim();
+    const store    = document.getElementById("store").value;
+    const issues   = Array.from(document.querySelectorAll('input[name="issues"]:checked')).map(i => i.value);
+
+    // Basic validation
+    if (!fullName || !bpLogin || !store) {
+      statusEl.className = "status show error";
+      statusEl.textContent = "Please fill out every required field.";
+      return;
+    }
+    if (issues.length === 0) {
+      statusEl.className = "status show error";
+      statusEl.textContent = "Please pick at least one item you're having trouble accessing.";
+      return;
+    }
+
+    // Pull manager + DM info from the directory for the email payload
+    const info = lookup(store);
+
+    const payload = {
+      fullName,
+      bpLogin,
+      store,
+      storeManagerName:     info.managerName,
+      storeManagerEmail:    info.managerEmail,
+      districtManagerEmail: info.dmEmail,
+      accessIssues:         issues,
+      accessIssuesText:     issues.join(", "),
+      submittedAt:          new Date().toISOString(),
+      submittedFrom:        location.href,
+      source:               "report-bp-access-issues form"
+    };
+
+    btn.disabled = true;
+    btn.textContent = "Submitting…";
+    try {
+      // Zapier catch-hooks accept JSON or form-encoded; JSON keeps arrays intact.
+      const res = await fetch(WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error("Webhook responded " + res.status);
+      statusEl.className = "status show success";
+      statusEl.textContent = "Thanks — your report was submitted. Your manager and district manager have been notified.";
+      document.getElementById("accessForm").reset();
+      document.getElementById("storeStatus").textContent = (directory.stores || []).length + " stores loaded.";
+    } catch (err) {
+      statusEl.className = "status show error";
+      statusEl.textContent = "Submission failed: " + err.message + ". Please try again or contact your manager directly.";
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Submit";
+    }
+  });
+
+  // Kick things off
+  loadDirectory();
+</script>
+</body>
+</html>
