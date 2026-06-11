@@ -261,11 +261,12 @@
   // Helpers — look up the manager/DM info from the directory
   // ============================================================
   function lookup(store) {
-    if (!store || !directory) return { managerEmail: "", managerName: "", dmEmail: "" };
+    if (!store || !directory) return { managerEmail: "", managerName: "", dmEmail: "", asmEmail: "" };
     return {
       managerEmail: (directory.storeManagers     || {})[store] || "",
       managerName:  (directory.storeManagerNames || {})[store] || "",
-      dmEmail:      (directory.storeDMs          || {})[store] || ""
+      dmEmail:      (directory.storeDMs          || {})[store] || "",
+      asmEmail:     (directory.storeAMs          || {})[store] || ""
     };
   }
 
@@ -309,6 +310,7 @@
       storeManagerName:     info.managerName,
       storeManagerEmail:    info.managerEmail,
       districtManagerEmail: info.dmEmail,
+      asmEmail:             info.asmEmail,
       accessIssues:         issues,
       accessIssuesText:     issues.join(", "),
       submittedAt:          new Date().toISOString(),
